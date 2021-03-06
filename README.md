@@ -1,5 +1,5 @@
 # Proiect pentru laborator
-## The following code corespond to the bellow screen shot:
+## The following code corespond to the below screen shot:
 ```
 Coada_de_caractere coada;
 Coada_de_caractere coada2;

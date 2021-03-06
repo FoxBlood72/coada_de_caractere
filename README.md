@@ -25,4 +25,4 @@ std::cout<<"Second queue: ";
 std::cout<<coada2<<std::endl;
 
 ```
-![Sample ss](https://imgur.com/a/DaCT2L9)
+![Sample ss](photos/ss.png)

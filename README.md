@@ -1,5 +1,5 @@
 # Proiect pentru laborator
-## The following code corespond to the bellow screen shot:
+## The following code corespond to the below screen shot:
 ```
 Coada_de_caractere coada;
 Coada_de_caractere coada2;
@@ -25,4 +25,4 @@ std::cout<<"Second queue: ";
 std::cout<<coada2<<std::endl;
 
 ```
-![Sample ss](https://imgur.com/a/DaCT2L9)
+![Sample ss](photos/ss.png)

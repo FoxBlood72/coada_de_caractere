@@ -1,5 +1,9 @@
 #include <iostream>
 
+class Coada_de_caractere; // Declaram inainte deoarece avem nevoie de aceasta clasa in clasa Nod
+						  // pentru supraincarcarea operatorului +
+
+
 class Nod{
     private:
         char info;
@@ -30,6 +34,11 @@ class Nod{
         {
             return this->info;
         }
+		
+		char *GetInfoReference()
+		{
+			return &this->info;
+		}
 
         Nod *GetNext()
         {
@@ -45,6 +54,8 @@ class Nod{
         {
             this->next = next;
         }
+		
+		friend Coada_de_caractere operator+(Nod *n, Coada_de_caractere &coada);
 
 
         ~Nod()
@@ -214,6 +225,21 @@ class Coada_de_caractere{
 
             return result;
         }
+		
+		Coada_de_caractere operator+(Nod &n)
+		{
+			Coada_de_caractere result;
+			Nod *cursor = this->first;
+			while(cursor != NULL)
+			{
+				result.push(cursor->GetInfo());
+				cursor = cursor->GetNext();
+			}
+			
+			result.push(n.GetInfo());
+			
+			return result;
+		}
 
         Coada_de_caractere operator-(Coada_de_caractere const &coada)
         {
@@ -248,7 +274,7 @@ class Coada_de_caractere{
 			return *this;
 		}
 		
-		bool operator==(const Coada_de_caractere &rightQueue)
+		bool isEqual(Coada_de_caractere rightQueue)
 		{
 			Nod *leftQueueCursor = this->first;
 			Nod *rightQueueCursor = rightQueue.first;
@@ -266,6 +292,128 @@ class Coada_de_caractere{
 				return true;
 			
 			return false;
+		}
+		
+		bool operator==(const Coada_de_caractere &rightQueue)
+		{
+			return this->isEqual(rightQueue);
+		}
+		
+		bool operator!=(const Coada_de_caractere &rightQueue)
+		{
+			return !(this->isEqual(rightQueue));
+		}
+		
+		
+		bool isLess(Coada_de_caractere leftQueue, Coada_de_caractere rightQueue)
+		{
+			Nod *leftQueueCursor = leftQueue.GetFirst();
+			Nod *rightQueueCursor = rightQueue.first;
+			
+			while(leftQueueCursor != NULL && rightQueueCursor != NULL)
+			{
+				if(leftQueueCursor->GetInfo() < rightQueueCursor->GetInfo())
+					return true; // Daca gasim un element mai mic in ASCI atunci returnam true
+				else
+				if(leftQueueCursor->GetInfo() > rightQueueCursor->GetInfo())
+					return false; // Daca gasim un element mai mare in ASCI atunci returnam false
+			
+				leftQueueCursor = leftQueueCursor->GetNext();
+				rightQueueCursor = rightQueueCursor->GetNext();
+			}
+			
+			if(leftQueueCursor == NULL && rightQueueCursor == NULL)
+				return false; // Daca cozile sunt egale returnam false
+				
+			if(leftQueueCursor == NULL)
+				return true; // Daca coada 1 este inclus in coada 2 si coada 2 este mai mare returnam true
+			
+			return false; // Daca coada 1 este mai mare decat coada 2 si coada 2 este inclusa in coada 1 returnam false 
+		}
+		
+		bool isLessOrEqual(Coada_de_caractere leftQueue, Coada_de_caractere rightQueue)
+		{
+			Nod *leftQueueCursor = leftQueue.GetFirst();
+			Nod *rightQueueCursor = rightQueue.first;
+			
+			while(leftQueueCursor != NULL && rightQueueCursor != NULL)
+			{
+				if(leftQueueCursor->GetInfo() < rightQueueCursor->GetInfo())
+					return true; // Daca gasim un element mai mic in ASCI atunci returnam true
+				else
+				if(leftQueueCursor->GetInfo() > rightQueueCursor->GetInfo())
+					return false; // Daca gasim un element mai mare in ASCI atunci returnam false
+					
+				leftQueueCursor = leftQueueCursor->GetNext();
+				rightQueueCursor = rightQueueCursor->GetNext();
+			}
+			
+			if(leftQueueCursor == NULL && rightQueueCursor == NULL)
+				return true; // Daca cozile sunt egale returnam true
+				
+			if(leftQueueCursor == NULL)
+				return true; // Daca coada 1 este inclus in coada 2 si coada 2 este mai mare returnam true
+			
+			return false; // Daca coada 1 este mai mare decat coada 2 si coada 2 este inclusa in coada 1 returnam false 
+		
+		}
+		
+		
+		bool operator<(const Coada_de_caractere &rightQueue)
+		{
+			return this->isLess(*this, rightQueue);
+		}
+		bool operator<=(const Coada_de_caractere &rightQueue)
+		{
+			return this->isLessOrEqual(*this, rightQueue);
+		}
+		bool operator>=(const Coada_de_caractere &rightQueue)
+		{
+			return !this->isLess(*this, rightQueue);
+		}
+		bool operator>(const Coada_de_caractere &rightQueue)
+		{
+			return !this->isLessOrEqual(*this, rightQueue);
+		}
+		
+		Coada_de_caractere &operator+=(const Coada_de_caractere &rightQueue)
+		{
+			Nod *cursor = rightQueue.first;
+			while(cursor != NULL)
+			{
+				this->push(cursor->GetInfo());
+				cursor = cursor->GetNext();
+			}
+			return *this;
+		}
+
+		char &operator[](const int position)
+		{
+			
+			Nod *cursor = this->GetFirst();
+			
+			for(int i = 0; i < position; i++, cursor = cursor->GetNext());
+			
+			char *c = cursor->GetInfoReference();
+			return *c;
+		}
+		  
+		 
+		
+		bool operator!()
+		{
+			return this->isempty();
+		}
+		
+		
+		Coada_de_caractere operator^(int n)
+		{
+			Coada_de_caractere concat_characters(*this);
+			Coada_de_caractere result;
+			for(int i = 1; i <= n; i++)
+				result += concat_characters;
+			
+			return result;
 		}
 
         ~Coada_de_caractere()
@@ -310,6 +458,19 @@ std::istream& operator>>(std::istream &in, Coada_de_caractere &coada)
     return in;
 }
 
+Coada_de_caractere operator+(Nod *n, Coada_de_caractere &coada)
+{
+	Coada_de_caractere result;
+	result.push(n->GetInfo());
+	Nod *cursor = coada.GetFirst();
+	while(cursor != NULL)
+	{
+		result.push(cursor->GetInfo());
+		cursor = cursor->GetNext();
+	}
+	
+	return result;
+}
 
 void demoQueues()
 {
@@ -348,14 +509,36 @@ void demoQueues()
 		std::cout<<"Queues are equal"<<std::endl;
 	else
 		std::cout<<"Queues are not equal"<<std::endl;
+		
+	std::cout<<"Testing != operator... coada != coada2"<<std::endl;
+	if(coada != coada2)
+		std::cout<<"Queues are not equal"<<std::endl;
+	else
+		std::cout<<"Queues are equal"<<std::endl;
+		
+	std::cout<<"Testing < and > operator... coada < coada2"<<std::endl;
+	if(coada < coada2)
+		std::cout<<"First queue smaller than queue2"<<std::endl;
+	else
+		if(coada > coada2)
+			std::cout<<"First queue bigger than queue2"<<std::endl;
+			else
+				std::cout<<"Queues are equal"<<std::endl;
 	
 	std::cout<<"Testing assign operator... coada = coada2"<<std::endl;
 	coada = coada2;
 	
+	int n;
+	char c;
+	std::cout<<"Input a valid position for the queue"<<std::endl;
+	std::cin>>n;
+	std::cout<<"Input a character for that position"<<std::endl;
+	std::cin>>c;
+	coada[n-1] = c;
+	
 	std::cout<<"Printing both queues"<<std::endl;
 	std::cout<<coada<<std::endl;
 	std::cout<<coada2<<std::endl;
-	
 
 	
 }
@@ -368,7 +551,9 @@ void menu()
 	std::cout<<"3. Totatul cozilor memorate."<<std::endl;
 	std::cout<<"4. Adaugati doua cozi memorate."<<std::endl;
 	std::cout<<"5. Scadeti doua cozi memorate."<<std::endl;
-	std::cout<<"6. Inchide programul."<<std::endl;
+	std::cout<<"6. Comparati doua cozi memorate cu un operator"<<std::endl;
+	std::cout<<"7. Concatenati o coada de mai multe ori"<<std::endl;
+	std::cout<<"8. Inchide programul."<<std::endl;
 }
 
 
@@ -402,15 +587,105 @@ Coada_de_caractere *readAndSaveNQueue(unsigned int &n)
 	return cozi;
 }
 
+void ask2queus(int &n1, int &n2, unsigned int &n3)
+{
+	n1 = 0;
+	n2 = 0;
+	while(n1 == 0 || n2 == 0)
+	{
+		std::cout<<"Selectati o coada din memorie: "<<std::endl;
+		std::cin>>n1;
+		std::cout<<"Selectati a doua coada din memorie: "<<std::endl;
+		std::cin>>n2;
+		if(n1 > n3 || n2 > n3)
+		{
+			std::cout<<"Una dintre cozi iese din memorie! Va rugam reselectati."<<std::endl;
+			n1 = 0;
+			n2 = 0;
+		}
+	}
+}
+
+void addQueues(Coada_de_caractere *q, unsigned int &n)
+{
+	int n1, n2;
+	ask2queus(n1, n2, n);
+	Coada_de_caractere r = q[n1-1] + q[n2-1];
+	std::cout<<"Rezultatul adunarii celor 2 cozi este: "<<r<<std::endl;
+}
+
+void subtractQueues(Coada_de_caractere *q, unsigned int &n)
+{
+	int n1, n2;
+	ask2queus(n1, n2, n);
+	Coada_de_caractere r = q[n1-1] - q[n2-1];
+	std::cout<<"Rezultatul scaderii celor 2 cozi este: "<<r<<std::endl;
+}
+int askComparasionSign()
+{
+	int r = 0;
+	while(r <= 0 || r >= 5)
+	{
+		std::cout<<"Cum doriti sa comparati cozile? "<<std::endl;
+		std::cout<<"1. <"<<std::endl;
+		std::cout<<"2. <="<<std::endl;
+		std::cout<<"3. >"<<std::endl;
+		std::cout<<"4. >="<<std::endl;
+		std::cin>>r;
+	}
+	return r;
+}
+
+void compareQueues(Coada_de_caractere *q, unsigned int &n)
+{
+	int n1, n2;
+	ask2queus(n1, n2, n);
+	int r = askComparasionSign();
+	if(r == 1)
+	std::cout<<(q[n1] < q[n2] ? "Adevarat" : "Fals")<<std::endl;
+	else
+	if(r == 2)
+	std::cout<<(q[n1] <= q[n2] ? "Adevarat" : "Fals")<<std::endl;
+	else
+	if(r == 3)
+	std::cout<<(q[n1] > q[n2] ? "Adevarat" : "Fals")<<std::endl;
+	else
+	if(r == 4)
+	std::cout<<(q[n1] >= q[n2] ? "Adevarat" : "Fals")<<std::endl;
+}
+
+
+void concatQueue(Coada_de_caractere *q, unsigned int &n)
+{
+	int selectedqueue = 0;
+	while(selectedqueue == 0)
+	{
+		std::cout<<"Ce coada doriti sa concatenati?"<<std::endl;
+		std::cin>>selectedqueue;
+		if(selectedqueue <= 0 || selectedqueue > n)
+			selectedqueue = 0;
+	}
+	
+	int concatnumber = 0;
+	std::cout<<"De cate ori doriti sa concatenti?"<<std::endl;
+	std::cin>>concatnumber;
+	Coada_de_caractere r = q[selectedqueue-1]^concatnumber;
+	std::cout<<"Coada de caractere formata este aceasta: "<<std::endl;
+	std::cout<<r<<std::endl;
+}
+
 void readAndExecuteInput(Coada_de_caractere *q, unsigned int &n)
 {
 	unsigned int r;
 	std::cin>>r;
 	
-	unsigned int exitcode = 6;
+	unsigned int exitcode = 8;
 	
 	if(r == exitcode)
 	return;
+	else
+	if(q == NULL && (r != 1 && r != 3 && r != 2))
+		std::cout<<"Va rugam incarcati cel putin o coada inainte de a folosi aceste functii"<<std::endl;
 	else
 	if(r == 1)
 	q = readAndSaveNQueue(n);
@@ -420,13 +695,26 @@ void readAndExecuteInput(Coada_de_caractere *q, unsigned int &n)
 	else
 	if(r == 3)
 	showQueues(q, n);
+	else
+	if(r == 4)
+	addQueues(q, n);
+	else
+	if(r == 5)
+	subtractQueues(q, n);
+	else
+	if(r == 6)
+	compareQueues(q, n);
+	else
+	if(r == 7)
+	concatQueue(q, n);
+	
+	
 	
 	
 	menu();
 	readAndExecuteInput(q, n);
-	delete []q;
+	
 }
-
 
 
 int main()
@@ -436,12 +724,9 @@ int main()
 	unsigned int n = 0;
 	menu();
 	readAndExecuteInput(q, n);
+	delete []q;
 	
 	
-	
-	
-	
-
 	
     return 0;
 }

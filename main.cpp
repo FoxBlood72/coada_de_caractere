@@ -37,7 +37,7 @@ class Nod{
 		
 		char *GetInfoReference()
 		{
-			return &this->info;
+			return &this->info; 
 		}
 
         Nod *GetNext()
@@ -80,6 +80,7 @@ class Coada_de_caractere{
 		Coada_de_caractere(Nod *first)
 		{
 			this->first = first;
+			this->last = this->first;
 		}
 		
 		Coada_de_caractere(Nod *first, Nod *last)
@@ -91,7 +92,7 @@ class Coada_de_caractere{
 		Coada_de_caractere(const Coada_de_caractere &c) {
 			// Nu se pot apela functii publice din interiorul construtorului
 			// Am incercat si prin push() dar nu a functionat deoarece a rezultat intr-o eroare, Segmentation Fault
-			Nod *cursour = c.first;
+			Nod *cursour = c.first; // Coada_de_caractere c(c2);
 			this->first = new Nod;
 			this->first->SetInfo(cursour->GetInfo());
 			this->last = this->first;
@@ -203,12 +204,12 @@ class Coada_de_caractere{
 		 */
 
         friend std::ostream& operator<<(std::ostream &out, Coada_de_caractere &coada);
-        friend std::istream& operator>>(std::istream &in, const Coada_de_caractere &coada);
+        friend std::istream& operator>>(std::istream &in, Coada_de_caractere &coada);
 
 
         Coada_de_caractere operator+(Coada_de_caractere const &coada)
         {
-            Coada_de_caractere result;
+            Coada_de_caractere result; // C1 + C2
 
             Nod *cursour = this->first;
             while(cursour != NULL)
@@ -243,7 +244,7 @@ class Coada_de_caractere{
 
         Coada_de_caractere operator-(Coada_de_caractere const &coada)
         {
-            Coada_de_caractere result;
+            Coada_de_caractere result; // C1 - C2
             Nod *cursourLeft = this->first;
             Nod *cursourRight = coada.first;
             while(cursourLeft != NULL && cursourRight != NULL)
@@ -262,7 +263,7 @@ class Coada_de_caractere{
 		Coada_de_caractere operator=(Coada_de_caractere const &coada)
 		{
 			while(!this->isempty()) // stergem toate elementele curente din coada
-				this->pop();
+				this->pop(); // C1 nu este neaparat null C1 = C2
 			Nod *cursour = coada.first;
 			while(cursour != NULL) // adaugam elementele din noua coada
 			{
@@ -289,7 +290,8 @@ class Coada_de_caractere{
 			}
 			
 			if(leftQueueCursor == NULL && rightQueueCursor == NULL)
-				return true;
+				return true; // A X D
+							// A X D E
 			
 			return false;
 		}
@@ -310,8 +312,8 @@ class Coada_de_caractere{
 			Nod *leftQueueCursor = leftQueue.GetFirst();
 			Nod *rightQueueCursor = rightQueue.first;
 			
-			while(leftQueueCursor != NULL && rightQueueCursor != NULL)
-			{
+			while(leftQueueCursor != NULL && rightQueueCursor != NULL) // A D D
+			{															// A X E
 				if(leftQueueCursor->GetInfo() < rightQueueCursor->GetInfo())
 					return true; // Daca gasim un element mai mic in ASCI atunci returnam true
 				else
@@ -361,7 +363,7 @@ class Coada_de_caractere{
 		
 		bool operator<(const Coada_de_caractere &rightQueue)
 		{
-			return this->isLess(*this, rightQueue);
+			return this->isLess(*this, rightQueue); // C1 < C2
 		}
 		bool operator<=(const Coada_de_caractere &rightQueue)
 		{
@@ -444,6 +446,8 @@ std::ostream& operator<<(std::ostream &out, Coada_de_caractere &coada)
 
 std::istream& operator>>(std::istream &in, Coada_de_caractere &coada)
 {
+	while(!coada.isempty())
+		coada.pop();
 	int n;
 	std::cout<<"Cate caractere doriti sa cititi pentru aceasta coada?\n";
 	std::cin>>n;
@@ -455,6 +459,7 @@ std::istream& operator>>(std::istream &in, Coada_de_caractere &coada)
 		in>>c;
 		coada.push(c);
 	}
+//	std::cout<<coada.GetLast();
     return in;
 }
 
@@ -716,17 +721,32 @@ void readAndExecuteInput(Coada_de_caractere *q, unsigned int &n)
 	
 }
 
+void Demo()
+{
+	Nod *n = new Nod('a');
+	Coada_de_caractere c1(n);
+	c1.push('b');
+	std::cout<<c1;
+}
+
+void Demo2()
+{
+	Coada_de_caractere c1;
+	std::cin>>c1;
+	//std::cout<<c1;
+	std::cin>>c1;
+	std::cout<<c1;
+}
+
 
 int main()
 {
 	
 	Coada_de_caractere *q = NULL;
 	unsigned int n = 0;
-	menu();
-	readAndExecuteInput(q, n);
-	delete []q;
-	
-	
-	
+//	menu();
+//	readAndExecuteInput(q, n);
+//	delete []q;
+	Demo2();
     return 0;
 }
